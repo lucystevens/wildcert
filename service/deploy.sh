@@ -1,5 +1,5 @@
 #!/bin/bash
-SERVICE_NAME=kotlin-app-template
+SERVICE_NAME=wildcert
 SERVICE_VERSION=$("cat /services/$SERVICE_NAME/version")
 
 LAST_JAR="/services/$SERVICE_NAME/$SERVICE_NAME-$SERVICE_VERSION.jar"
@@ -11,6 +11,6 @@ elif [ ! -f "$NEW_JAR" ]; then
 	echo "$NEW_JAR not found."
 else
 	echo "$1" > "/services/$SERVICE_NAME/version"
-	sudo systemctl restart kotlin-app-template.service
+	sudo systemctl restart wildcert.service
   # TODO remove all jars except for running and last jar
 fi
