@@ -1,6 +1,0 @@
-#!/bin/bash
-SERVICE_VERSION=$(cat version)
-export APP_PORT=7001
-export PROJECT_NAME="wildcert"
-export PROJECT_VERSION="$SERVICE_VERSION"
-java -jar "wildcert-$SERVICE_VERSION.jar"

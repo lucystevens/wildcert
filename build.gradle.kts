@@ -6,7 +6,6 @@ plugins {
     application
     `maven-publish`
 
-    id("com.avast.gradle.docker-compose") version "0.14.9"
     id("uk.co.lukestevens.plugins.release-helper") version "0.1.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -17,7 +16,7 @@ repositories {
 }
 
 group = "uk.co.lucystevens"
-version = "0.0.2"
+version = "0.0.1"
 
 sourceSets {
     create("integrationTest") {
@@ -40,20 +39,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.insert-koin:koin-core:$koinVersion")
 
-    // ktorm for database connections
-    implementation("org.ktorm:ktorm-core:$ktormVersion")
-    implementation("org.ktorm:ktorm-support-postgresql:$ktormVersion")
-    implementation("org.postgresql:postgresql:42.3.4")
-
-    // javalin + jackson for API server
-    implementation("io.javalin:javalin:4.5.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
-    // okhttp for API requests
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
-
     // logback for logging
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("com.github.maricn:logback-slack-appender:1.6.1")
@@ -70,10 +55,6 @@ application {
 /**
  *  Tasks
  */
-configure<ComposeSettings> {
-    startedServices.set(listOf("local-db"))
-    forceRecreate.set(true)
-}
 
 tasks.test {
     useJUnitPlatform()
@@ -97,7 +78,4 @@ val integrationTest = task<Test>("integrationTest") {
     testClassesDirs = sourceSets["integrationTest"].output.classesDirs
     classpath = sourceSets["integrationTest"].runtimeClasspath
     outputs.upToDateWhen { false }
-    mustRunAfter(tasks.composeUp)
 }
-
-dockerCompose.isRequiredBy(integrationTest)

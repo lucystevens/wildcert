@@ -2,12 +2,7 @@
 ![Version][version-badge]
 
 # wildcert
-A template repo for starting kotlin applications.
-
-Remove `.github/workflows/initialise-template.yml` once created.
-
-## Template features
-This repo contains boilerplate code for an API, with database access.
+Tool for requesting and renewing wildcard SSL certificates
 
 ## Running
 Run locally using
