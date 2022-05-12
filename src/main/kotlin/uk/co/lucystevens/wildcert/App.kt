@@ -8,6 +8,6 @@ class App(private val args: Array<String>) : KoinComponent {
     private val appRunner by inject<AppRunner>()
 
     fun run(){
-        appRunner.run(args.toList())
+        appRunner.run(args)
     }
 }

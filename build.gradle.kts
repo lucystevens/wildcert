@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.6.10"
 
@@ -41,18 +43,27 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("com.github.maricn:logback-slack-appender:1.6.1")
 
+    // kotlinx clii
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
+
     // testing
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.12.3")
 }
 
 application {
-    mainClass.set("uk.co.lucystevens.LauncherKt")
+    mainClass.set("uk.co.lucystevens.wildcert.LauncherKt")
 }
 
 /**
  *  Tasks
  */
+
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    }
+}
 
 tasks.test {
     useJUnitPlatform()

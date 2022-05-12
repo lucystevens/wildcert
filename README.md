@@ -4,22 +4,41 @@
 # wildcert
 Tool for requesting and renewing wildcard SSL certificates
 
+Currently, this tool only supports LetsEncrypt as a CA and GoDaddy as a domain provider.
+Please raise an issue if there are additional CAs or providers you'd like to see supported.
+
 ## Running
 Run locally using
 ```shell
-./gradlew run -Dlogback.configurationFile=src/test/resources/logback-test.xml
+./gradlew run
 ```
 
-### Configuration
-#### Environment variables
-For connecting to the database
-- `DATABASE_URL` - String. The JDBC url for the database.
-- `DATABASE_USERNAME` - String. The username for the database.
-- `DATABASE_PASSWORD` - String. The password for the database.
+### Usage
+#### Request certificate(s)
+Run the `request` command to request new wildcard certificates for 1 or more domains.
+These will be written to a specified output folder.
+```
+Usage: wildcert request options_list
+Options:
+    --domains, -d -> Domains to request certificates for. (always required) { Comma-separated list }
+    --output, -o -> Directory to output new certificates to. (always required) { String }
+    --ca [LETSENCRYPT] -> Certificate authority to use. { Value should be one of [letsencrypt] }
+    --provider [GODADDY] -> Domain provider to use. { Value should be one of [godaddy] }
+    --help, -h -> Usage info
+```
 
-For running of the application server
-- `ADMIN_TOKEN` - String. Secret token uses to authenticate admin requests
-- `APP_PORT` - Integer. The port which the http server will listen on. Defaults to 7000.
+### Renew certificate(s)
+Run the `renew` command to renew all certificates in a specific source folder due to expire within a specified number of days.
+```
+Usage: wildcert renew options_list
+Options:
+    --domains, -d -> Domains to renew certificates for. Defaults to all. { Comma-separated list }
+    --source, -s -> Directory read certificates to renew from. (always required) { String }
+    --expiresIn, -e [7] -> Renew all certs expiring in this number of days { Int }
+    --ca [LETSENCRYPT] -> Certificate authority to use. { Value should be one of [letsencrypt] }
+    --provider [GODADDY] -> Domain provider to use. { Value should be one of [godaddy] }
+    --help, -h -> Usage info
+```
 
 ## Tests
 To run unit tests:
@@ -32,102 +51,13 @@ To run integration tests:
 ./gradlew integrationTest
 ```
 
-## Deploying as a service
-### First time server setup
-Before deploying the application to a server automatically, some initial manual setup needs to be done:
-
-#### Setup deployer user
-As root, create the `deployer` user and services directory if they don't exist
-```shell
-adduser deployer
-sudo mkdir /services
-sudo chown deployer /services
-```
-
-Set up SSH key access for the `deployer` user, you'll need this later.
-More detail can be found here: https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-ubuntu-20-04
-
-Setup user as sudoer for systemctl commands.
-Add these lines to the `/etc/sudoers.d/deployer` file:
-```shell
-%deployer ALL= NOPASSWD: /bin/systemctl start wildcert
-%deployer ALL= NOPASSWD: /bin/systemctl stop wildcert
-%deployer ALL= NOPASSWD: /bin/systemctl restart wildcert
-```
-
-#### Setup application as service
-First ssh onto the server and create the service directory
-```shell
-ssh deployer@server
-mkdir /services/wildcert
-```
-
-Logout, and copy files over to the server
-```shell
-scp service/* deployer@server:/services/wildcert
-```
-
-Log back in and install as a service
-```shell
-ssh deployer@server
-
-touch /services/wildcert/version
-chmod +x /services/wildcert/run
-chmod +x /services/wildcert/deploy.sh
-
-sudo cp /services/wildcert/kotlin-app-template.service /etc/systemd/system/
-sudo systemctl daemon-reload
-```
-
-### Release workflow
-Once the initial setup is complete, deployments will be triggered automatically via the release workflow:
-Tagging a commit with a semantic version (e.g. vx.x.x) will start the workflow. 
-This will build the application, create a GitHub release, and deploy it as a service.
-
-This release workflow requires some secrets to be defined:
- - `HOST` - The IP for the host server to deploy to
- - `SSH_KEY` - The content of the SSH key for the `deployer` user
- - `SSH_PASSPHRASE` - The passphrase to decrypt the ssh key
-
-
-## Deploying as a Docker container
-Services deployed as a Docker container are not quite as seamless as those deployed as a service, and require some additional
-manual steps. There is also some initial set up work to be done if the server has not yet been used for Docker applications.
-
-### First time server setup
-As root, create the `docker` user
-```shell
-adduser docker
-```
-
-Install Docker, using this guide: https://docs.docker.com/engine/install/ubuntu/
-Then add the `docker` user to the `docker` group
-```shell
-sudo groupadd docker
-sudo usermod -aG docker docker
-```
-
-### Release workflow
+## Releasing
 Tagging a commit with a semantic version (e.g. vx.x.x) will start the workflow.
-This will build the application, create a GitHub release, and push a tagged Docker image to the central repository.
-
-This release workflow requires some secrets to be defined:
-- `DOCKERHUB_TOKEN` - The secret token for the Dockerhub account the image is being pushed to
+This will build the application, create a GitHub release, and build a jar file.
 
 ### Updating the running application
 Once the new image has been pushed by the step above, you can update the running container.
 You should be logged in as the `docker` user created above for these steps.
-
-If running, stop the existing container and remove it
-```shell
-docker stop wildcert
-docker rm wildcert
-```
-
-Run the new container, remembering to define any necessary environment variables and the exposed port:
-```shell
-docker run -d -p PORT:7000 --env-file wildcert.env lucystevens/kotlin-app-template:latest
-```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
