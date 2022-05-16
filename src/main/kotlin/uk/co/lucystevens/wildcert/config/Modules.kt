@@ -2,8 +2,8 @@ package uk.co.lucystevens.wildcert.config
 
 import org.koin.dsl.module
 import uk.co.lucystevens.wildcert.cli.AppRunner
-import uk.co.lucystevens.wildcert.handler.RenewCertificateHandler
-import uk.co.lucystevens.wildcert.handler.RequestCertificateHandler
+import uk.co.lucystevens.wildcert.handler.CertificateHandler
+import uk.co.lucystevens.wildcert.handler.AccountsHandler
 import java.time.Clock
 import kotlin.random.Random
 
@@ -17,8 +17,8 @@ object Modules {
     }
 
     private val handlers = module {
-        single { RequestCertificateHandler() }
-        single { RenewCertificateHandler() }
+        single { AccountsHandler() }
+        single { CertificateHandler() }
     }
 
     internal val allModules = listOf(

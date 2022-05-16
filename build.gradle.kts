@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
 
     application
     `maven-publish`
@@ -43,8 +44,13 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("com.github.maricn:logback-slack-appender:1.6.1")
 
-    // kotlinx clii
+    // kotlinx cli
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+
+    // acme4j
+    implementation("org.shredzone.acme4j:acme4j-client:2.13")
+    implementation("org.shredzone.acme4j:acme4j-utils:2.13")
 
     // testing
     testImplementation(kotlin("test"))

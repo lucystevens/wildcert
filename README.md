@@ -14,6 +14,25 @@ Run locally using
 ```
 
 ### Usage
+#### MVP 
+```shell
+wildcert accounts add -n name -e email -k keypair --default
+wildcert accounts list
+
+wildcert certs request -d domains -o output -a account
+wildcert certs renew
+wildcert certs list
+```
+
+#### Future
+```shell
+wildcert accounts update -n name -e email -k keypair --default
+wildcert accounts delete
+
+wildcert certs revoke
+```
+
+Replace the below
 #### Request certificate(s)
 Run the `request` command to request new wildcard certificates for 1 or more domains.
 These will be written to a specified output folder.
