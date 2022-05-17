@@ -1,19 +1,22 @@
 package uk.co.lucystevens.wildcert.cli.lib
 
+import uk.co.lucystevens.wildcert.cli.lib.option.Option
+import uk.co.lucystevens.wildcert.cli.lib.option.OptionBuilder
+
 class CliBuilder {
     companion object {
 
         private val staticParser = ThreadLocal<CliParser>()
         private val currentCommand = ThreadLocal<Command>()
 
-        fun setStaticParser(parser: CliParser) {
+        internal fun setStaticParser(parser: CliParser) {
             staticParser.set(parser)
             currentCommand.set(parser)
         }
 
         fun command(name: String, description: String? = null, commandGroup: () -> Unit){
             val parentCommand = currentCommand.get()
-            val thisCommand = Command(name, parentCommand, description)
+            val thisCommand = Command(name, description)
             parentCommand.commands[thisCommand.name] = thisCommand
             currentCommand.set(thisCommand)
             try {
@@ -27,24 +30,15 @@ class CliBuilder {
             type: OptionType<T>,
             shortName: String,
             fullName: String? = null,
-            description: String? = null,
-            required: Boolean = false,
-            default: T? = null
-        ): T?  = option(Option(type, shortName, fullName, description, required, default))
+            description: String? = null
+        ): OptionBuilder<T>  = option(Option(type, shortName, fullName, description))
 
-        fun <T> option(option: Option<T>): T? {
-            if(option.required && option.default != null)
-                throw ConfigurationException("Option ${option.shortName} cannot have a default and be required.")
-
+        fun <T> option(option: Option<T>): OptionBuilder<T> {
             val command = currentCommand.get()
-            command.options.add(option)
 
             val options = staticParser.get().commandModel.options
             val value = options["-${option.shortName}"]?: options["--${option.fullName}"]
-            return if(value == null){
-                if(option.required) command.error = UsageException("Missing required option ${option.shortName}", command)
-                option.default
-            } else option.type.fromArg(value)
+            return OptionBuilder(option, command, value)
         }
 
         fun execute(handler: () -> Unit) {

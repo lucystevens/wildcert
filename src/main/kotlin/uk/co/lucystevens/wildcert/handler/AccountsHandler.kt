@@ -10,4 +10,9 @@ class AccountsHandler {
     ){
         println("name: $name, email: $email, keyPair: $keyPair, default: $isDefault")
     }
+
+
+    fun list(){
+        println("Listing accounts")
+    }
 }

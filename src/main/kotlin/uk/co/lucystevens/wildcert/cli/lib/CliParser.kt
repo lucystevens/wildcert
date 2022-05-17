@@ -1,7 +1,10 @@
 package uk.co.lucystevens.wildcert.cli.lib
 
 // TODO extract into separate library at some point
-class CliParser(name: String): Command(name, null, null) {
+class CliParser(
+    name: String,
+    private val printOut: (String) -> Unit = { println(it) }
+): Command(name, null) {
 
     internal lateinit var commandModel: CommandModel
 
@@ -10,13 +13,13 @@ class CliParser(name: String): Command(name, null, null) {
         commandModel = parseCommandModel(args)
         commandGroup.invoke()
 
-        println(
+        printOut.invoke(
             if(commandModel.isHelp()) printHelp()
             else executeCommands()
         )
     }
 
-    internal fun executeCommands(): String {
+    private fun executeCommands(): String {
         return try {
             val currentCommand = getCurrentCommand()
             currentCommand.execute()
@@ -26,7 +29,7 @@ class CliParser(name: String): Command(name, null, null) {
         }
     }
 
-    fun printHelp(): String {
+    private fun printHelp(): String {
         val help = StringBuilder()
         val currentCommand = getCurrentCommand()
         help.appendLine("Usage: $name ${commandModel.arguments.joinToString(" ")} [OPTIONS]")
@@ -34,7 +37,7 @@ class CliParser(name: String): Command(name, null, null) {
         return help.toString()
     }
 
-    fun getCurrentCommand(): Command {
+    private fun getCurrentCommand(): Command {
         var currentCommand: Command = this
         commandModel.arguments.forEach {
             currentCommand = currentCommand.commands[it] ?:

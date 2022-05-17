@@ -13,4 +13,7 @@ class OptionType<T>(
     }
 
     fun fromArg(arg: String): T = fromArg.invoke(arg)
+
+    fun nullable(): OptionType<T?> = OptionType(description, fromArg)
+
 }

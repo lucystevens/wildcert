@@ -1,15 +1,16 @@
 package uk.co.lucystevens.wildcert.cli.lib
 
+import uk.co.lucystevens.wildcert.cli.lib.option.FullOption
+
 open class Command(
     val name: String,
-    val parentCommand: Command?,
-    val description: String?) {
+    private val description: String?) {
 
     val commands = mutableMapOf<String, Command>()
-    var error: UsageException? = null
-    var handler = { } // TODO No handler defined logic
+    var handler: () -> Unit = { throw UsageException("No handler defined for $name.", this) }
 
-    val options = mutableListOf<Option<*>>()
+    var error: UsageException? = null
+    val options = mutableListOf<FullOption<*>>()
 
     fun execute(){
         if(error != null) throw error as UsageException
