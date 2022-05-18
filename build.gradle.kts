@@ -44,9 +44,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("com.github.maricn:logback-slack-appender:1.6.1")
 
-    // kotlinx cli
-    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    // kotlinx serialisation
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
     // acme4j
     implementation("org.shredzone.acme4j:acme4j-client:2.13")

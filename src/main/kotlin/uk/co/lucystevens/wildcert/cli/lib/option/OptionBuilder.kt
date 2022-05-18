@@ -1,7 +1,7 @@
 package uk.co.lucystevens.wildcert.cli.lib.option
 
 import uk.co.lucystevens.wildcert.cli.lib.Command
-import uk.co.lucystevens.wildcert.cli.lib.UsageException
+import uk.co.lucystevens.wildcert.cli.lib.exception.UsageException
 import java.util.*
 
 class OptionBuilder<T>(

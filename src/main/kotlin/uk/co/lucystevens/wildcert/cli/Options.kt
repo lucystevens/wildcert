@@ -32,4 +32,32 @@ object Options {
         fullName = "default",
         description = "Whether this account should be the default account. Defaults to true for the first account"
     )
+
+    val domains = Option(
+        OptionType.list,
+        shortName = "d",
+        fullName = "domains",
+        description = "Domains to request certificates for."
+    )
+
+    val output = Option(
+        OptionType.string,
+        shortName = "o",
+        fullName = "output",
+        description = "Output directory for requested certificates."
+    )
+
+    val expiresIn = Option(
+        OptionType.int,
+        shortName = "e",
+        fullName = "expires-in",
+        description = "Renew all certs expiring within this number of days."
+    )
+
+    val account = Option(
+        OptionType.string,
+        shortName = "a",
+        fullName = "account",
+        description = "Account to use when requesting certificates. If not specified the default account is used."
+    )
 }

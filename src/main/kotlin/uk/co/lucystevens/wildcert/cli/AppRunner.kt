@@ -1,23 +1,16 @@
 package uk.co.lucystevens.wildcert.cli
 
-import kotlinx.cli.ExperimentalCli
 import uk.co.lucystevens.wildcert.cli.lib.CliBuilder.Companion.command
 import uk.co.lucystevens.wildcert.cli.lib.CliBuilder.Companion.execute
 import uk.co.lucystevens.wildcert.cli.lib.CliBuilder.Companion.option
-import uk.co.lucystevens.wildcert.cli.lib.option.FullOption
 import uk.co.lucystevens.wildcert.cli.lib.CliParser
-import uk.co.lucystevens.wildcert.cli.lib.OptionType
-import uk.co.lucystevens.wildcert.handler.CertificateHandler
 import uk.co.lucystevens.wildcert.handler.AccountsHandler
-import uk.co.lucystevens.wildcert.logger
+import uk.co.lucystevens.wildcert.handler.CertificateHandler
 
-@OptIn(ExperimentalCli::class)
 class AppRunner(
     private val accountsHandler: AccountsHandler,
     private val certsHandler: CertificateHandler
 ) {
-
-    private val logger = logger<AppRunner>()
 
     fun run(args: Array<String>){
         val parser = CliParser("wildcert")
@@ -32,6 +25,23 @@ class AppRunner(
                 }
                 command("list", "List all accounts"){
                     execute { accountsHandler.list() }
+                }
+            }
+            command("certs", "Manage certificate(s)"){
+                command("request", "Request new certificate(s)"){
+                    val domains by option(Options.domains).required()
+                    val output by option(Options.output).required()
+                    val account by option(Options.account).optional()
+                    execute { certsHandler.request(domains, output, account) }
+                }
+                command("renew", "Renew expiring certificate(s)"){
+                    val domains by option(Options.domains).optional()
+                    val expiresIn by option(Options.expiresIn).default(7)
+                    val account by option(Options.account).optional()
+                    execute { certsHandler.renew(domains, expiresIn, account) }
+                }
+                command("list", "List all certificates"){
+                    execute { certsHandler.list() }
                 }
             }
         }

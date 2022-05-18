@@ -1,9 +1,14 @@
 package uk.co.lucystevens.wildcert.cli.lib
 
+import uk.co.lucystevens.wildcert.cli.lib.exception.HandlerException
+import uk.co.lucystevens.wildcert.cli.lib.exception.UsageException
+
 // TODO extract into separate library at some point
 class CliParser(
     name: String,
-    private val printOut: (String) -> Unit = { println(it) }
+    private val printOut: (String) -> Unit = { println(it) },
+    private val printErr: (String) -> Unit = { System.err.println(it) },
+    private val handleExceptions: (Exception) -> Unit = { printErr.invoke(it.message?: "Something went wrong") }
 ): Command(name, null) {
 
     internal lateinit var commandModel: CommandModel
@@ -13,19 +18,22 @@ class CliParser(
         commandModel = parseCommandModel(args)
         commandGroup.invoke()
 
-        printOut.invoke(
-            if(commandModel.isHelp()) printHelp()
+
+            if(commandModel.isHelp())
+                printOut(printHelp())
             else executeCommands()
-        )
     }
 
-    private fun executeCommands(): String {
-        return try {
+    private fun executeCommands() {
+        try {
             val currentCommand = getCurrentCommand()
             currentCommand.execute()
-            ""
         } catch (e: UsageException){
-            e.message?: "Unspecified error."
+            printErr(e.message?: "Unspecified error.")
+        } catch (e: HandlerException){
+            printErr(e.message?: "Something went wrong")
+        } catch (e: Exception){
+            handleExceptions(e)
         }
     }
 

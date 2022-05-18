@@ -1,5 +1,6 @@
 package uk.co.lucystevens.wildcert.cli.lib
 
+import uk.co.lucystevens.wildcert.cli.lib.exception.UsageException
 import uk.co.lucystevens.wildcert.cli.lib.option.FullOption
 
 open class Command(

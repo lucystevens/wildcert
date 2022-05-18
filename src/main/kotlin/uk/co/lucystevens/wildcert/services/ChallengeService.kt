@@ -11,23 +11,28 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.net.URL
+import java.util.Scanner
 
 
-class ChallengeService {
+class ChallengeService(private val keyPairService: KeyPairService) {
 
     private val letsEncryptStageUrl = "acme://letsencrypt.org/staging"
     private val letsEncryptProdUrl = "acme://letsencrypt.org"
 
     private val session = Session(letsEncryptStageUrl)
 
-    fun createAccount(email: String, keyPairFile: String): String{
-        val accountKeyPair = KeyPairUtils.createKeyPair(4096)
-        FileWriter(keyPairFile).use {
-            KeyPairUtils.writeKeyPair(accountKeyPair, it)
-        }
+    fun createAccount(email: String, keyPairFile: File): String{
+        val accountKeyPair = keyPairService.getOrCreateKeyPair(keyPairFile)
+
+        // Doesn't work when running with gradle, disabling for time being
+        /*val tocLink = session.metadata.termsOfService
+        println("Do you agree to the terms of service? (Y/n) ($tocLink)")
+        val answer = readLine()?.lowercase()
+        if(answer != "y" && answer != "yes")
+            throw IllegalStateException("Terms of service declined.")*/
 
         val account = AccountBuilder()
-            .addContact(email)
+            .addContact("mailto:$email")
             .agreeToTermsOfService()
             .useKeyPair(accountKeyPair)
             .create(session)
@@ -35,10 +40,8 @@ class ChallengeService {
         return account.location.toString()
     }
 
-    fun login(accountUrl: String, keyPairFile: String): Account{
-        val keyPair = FileReader(keyPairFile).use {
-            KeyPairUtils.readKeyPair(it)
-        }
+    fun login(accountUrl: String, keyPairFile: File): Account{
+        val keyPair = keyPairService.readKeyPair(keyPairFile)
         val login = session.login(URL(accountUrl), keyPair)
         return login.account
     }
@@ -71,10 +74,7 @@ class ChallengeService {
         }
 
         // Create private key pair for cert
-        val domainKeyPair = KeyPairUtils.createKeyPair(4096)
-        FileWriter(File(outputDir, "$domain.pem")).use {
-            KeyPairUtils.writeKeyPair(domainKeyPair, it)
-        }
+        val domainKeyPair = keyPairService.createKeyPair(File(outputDir, "$domain.pem"))
 
         // Create CSR
         val csrb = CSRBuilder().apply {

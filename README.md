@@ -20,7 +20,7 @@ wildcert accounts add -n name -e email -k keypair --default
 wildcert accounts list
 
 wildcert certs request -d domains -o output -a account
-wildcert certs renew
+wildcert certs renew -d domains -a account -e expiresIn
 wildcert certs list
 ```
 

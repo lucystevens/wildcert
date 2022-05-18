@@ -8,5 +8,8 @@ data class AccountData(
     val email: String,
     val caUrl: String,
     val keyPairFile: String,
-    val isDefault: Boolean
-)
+    var isDefault: Boolean
+){
+    override fun toString(): String =
+        "$name -> email: $email, caUrl: $caUrl, keyPair: $keyPairFile ${if(isDefault) "(default)" else ""}"
+}

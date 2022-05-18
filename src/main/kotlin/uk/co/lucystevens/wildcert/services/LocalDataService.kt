@@ -7,15 +7,18 @@ import uk.co.lucystevens.wildcert.data.models.AppData
 import java.io.File
 
 class LocalDataService(
-    private val localDataFile: String,
+    private val localDataFile: File,
     private val json: Json
     ) {
 
     val data by lazy {
-        json.decodeFromString<AppData>(File(localDataFile).readText())
+        if(localDataFile.exists())
+            json.decodeFromString(localDataFile.readText())
+        else
+            AppData(1, mutableListOf(), mutableListOf())
     }
 
     fun persistData(){
-        File(localDataFile).writeText(json.encodeToString(data))
+        localDataFile.writeText(json.encodeToString(data))
     }
 }

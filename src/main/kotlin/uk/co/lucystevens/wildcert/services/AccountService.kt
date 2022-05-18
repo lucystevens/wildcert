@@ -11,4 +11,12 @@ class AccountService(
 
     fun getAccountByName(name: String): AccountData? =
         localDataService.data.accounts.find { it.name == name }
+
+    fun listAccounts(): List<AccountData> =
+        localDataService.data.accounts
+
+    fun addAccount(account: AccountData) {
+        localDataService.data.accounts.add(account)
+        localDataService.persistData()
+    }
 }

@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class AppData(
     @SerialName("version")
     val schemaVersion: Int,
-    val accounts: List<AccountData>,
-    val certificates: List<CertificateData>
+    val accounts: MutableList<AccountData>,
+    val certificates: MutableList<CertificateData>
 )
