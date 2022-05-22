@@ -6,14 +6,21 @@ import uk.co.lucystevens.wildcert.cli.lib.CliBuilder.Companion.option
 import uk.co.lucystevens.wildcert.cli.lib.CliParser
 import uk.co.lucystevens.wildcert.handler.AccountsHandler
 import uk.co.lucystevens.wildcert.handler.CertificateHandler
+import uk.co.lucystevens.wildcert.logger
 
 class AppRunner(
     private val accountsHandler: AccountsHandler,
     private val certsHandler: CertificateHandler
 ) {
 
+    val logger = logger<AppRunner>()
+
     fun run(args: Array<String>){
-        val parser = CliParser("wildcert")
+        val parser = CliParser(
+            name = "wildcert",
+            printErr = { logger.error(it) },
+            handleExceptions = { logger.error("Error!", it) }
+        )
         parser.parse(args) {
             command("accounts", "Manage account(s)"){
                 command("add", "Add a new account"){

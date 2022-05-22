@@ -1,6 +1,8 @@
-package uk.co.lucystevens.wildcert.services
+package uk.co.lucystevens.wildcert.services.data
 
+import uk.co.lucystevens.wildcert.data.models.CertificateData
 import uk.co.lucystevens.wildcert.data.models.FullCertificateInfo
+import uk.co.lucystevens.wildcert.services.util.CertificateReader
 
 class CertificateService(
     private val localDataService: LocalDataService,
@@ -13,7 +15,12 @@ class CertificateService(
             FullCertificateInfo(
                 it.certFile,
                 it.defaultAccount,
-                cert.subjectX500Principal.name,
+                it.domain,
                 cert.notAfter)
         }
+
+    fun addCertificates(certs: List<CertificateData>) {
+        localDataService.data.certificates.addAll(certs)
+        localDataService.persistData()
+    }
 }

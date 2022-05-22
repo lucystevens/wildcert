@@ -40,6 +40,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.insert-koin:koin-core:$koinVersion")
 
+    // okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+
     // logback for logging
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("com.github.maricn:logback-slack-appender:1.6.1")

@@ -1,4 +1,4 @@
-package uk.co.lucystevens.wildcert.services
+package uk.co.lucystevens.wildcert.services.util
 
 import java.io.FileInputStream
 import java.security.cert.CertificateFactory

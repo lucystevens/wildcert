@@ -1,4 +1,4 @@
-package uk.co.lucystevens.wildcert.services
+package uk.co.lucystevens.wildcert.services.data
 
 import uk.co.lucystevens.wildcert.data.models.AccountData
 
